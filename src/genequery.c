@@ -26,6 +26,6 @@ static struct PyModuleDef genequery = {
 PyMODINIT_FUNC PyInit_genequery(void)
 {
     char * fname = "./data/log_factorial.dat";
-    loadLogFactorials(fname, 100001);
+    factorials(fname, 100001);
     return PyModule_Create(&genequery);
 }

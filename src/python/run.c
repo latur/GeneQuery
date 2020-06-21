@@ -1,15 +1,53 @@
+unsigned next(unsigned char *target, long *offset)
+{
+    *offset += 1;
+    return target[*offset - 1];
+}
+
+void addRelation(unsigned *relation, gmt *db, long offset, unsigned gene)
+{
+    long cursor = 0;
+    unsigned space = 0;
+    unsigned value;
+
+    while (cursor < db->gse_count) {
+        value = next(db->genes, &offset);
+        if (value == 254) {
+            space = next(db->genes, &offset) + 3;
+        }
+        if (value == 253) {
+            space = next(db->genes, &offset) * 255;
+            space += next(db->genes, &offset) + 3;
+        }
+        while (space > 0) {
+            relation[gene * db->gse_count + cursor] = 255;
+            cursor += 1;
+            space -= 1;
+        }
+        if (value <= 252 || value == 255) {
+            relation[gene * db->gse_count + cursor] = value;
+            cursor += 1;
+        }
+    }
+}
+
 static PyObject * run(PyObject *self, PyObject *args, PyObject *keywds)
 {
-    unsigned index = 0;
     PyObject * offsets;
-
-    if (!PyArg_ParseTuple(args, "iO", &index, &offsets)) return NULL;
-    if (index >= dbi) {
-        PyErr_SetString(PyExc_RuntimeError, "Target DB.bin not loaded");
-        return NULL;
+    int index = -1;
+    char * dbname;
+    static char * kwlist[] = {"offsets", "index", "dbname", NULL};
+    if (!PyArg_ParseTupleAndKeywords(args, keywds, "O|is", kwlist,
+                                     &offsets, &index, &dbname)) return NULL;
+    /* --------------------------------------------------------------------- */
+    gmt * db = NULL;
+    if (index >= 0 && index < dbi) {
+        db = dbset[index];
+    } else {
+        db = reader(dbname);
+        if (db == NULL) return NULL;
     }
 
-    gmt * db = dbset[index];
     unsigned size = PyList_Size(offsets);
 
     unsigned * relation = NULL;
@@ -21,35 +59,7 @@ static PyObject * run(PyObject *self, PyObject *args, PyObject *keywds)
     for (unsigned gene = 0; gene < size; gene++) {
         num = PyList_GetItem(offsets, gene);
         long offset = PyLong_AsLong(num);
-
-        long cursor = 0;
-        unsigned space = 0;
-        unsigned value;
-
-        while (cursor < db->gse_count) {
-            value = db->genes[offset];
-            offset += 1;
-
-            if (value == 254) {
-                space = db->genes[offset] + 3;
-                offset += 1;
-            }
-            if (value == 253) {
-                space = db->genes[offset] * 255;
-                offset += 1;
-                space += db->genes[offset] + 3;
-                offset += 1;
-            }
-            while (space > 0) {
-                relation[gene * db->gse_count + cursor] = 255;
-                cursor += 1;
-                space -= 1;
-            }
-            if (value <= 252 || value == 255) {
-                relation[gene * db->gse_count + cursor] = value;
-                cursor += 1;
-            }
-        }
+        addRelation(relation, db, offset, gene);
     }
 
     // Counters matrix: [GSE x modules] -> genes found
@@ -71,6 +81,10 @@ static PyObject * run(PyObject *self, PyObject *args, PyObject *keywds)
         }
     }
 
+    // Total genes in all modules for this GSE
+    unsigned total = 0;
+    // Total genes in this module
+    unsigned msize = 0;
     // P-value + total
     PyObject * result = Py_BuildValue("[]");
     for (unsigned gse = 0; gse < db->gse_count; gse++) {
@@ -79,11 +93,8 @@ static PyObject * run(PyObject *self, PyObject *args, PyObject *keywds)
             unsigned a = counters[gse * db->module_count + m];
             if (a == 0) continue;
 
-            // Total genes in all modules for this GSE
-            unsigned total = decode(&db->counts[gse * (db->module_count * 2 + 1)], 3);
-
-            // Total genes in this module
-            unsigned msize = decode(&db->counts[gse * (db->module_count * 2 + 1) + 3 + m * 2], 2);
+            total = decode(&db->counts[gse * (db->module_count * 2 + 1)], 3);
+            msize = decode(&db->counts[gse * (db->module_count * 2 + 1) + 3 + m * 2], 2);
 
             int b = msize - a;
             int c = request[gse] - a;

@@ -45,7 +45,7 @@ def query(s_from, s_to, genes):
         if id not in species[s_to]['info']['genes']: continue
         offsets.append(species[s_to]['info']['genes'][id])
 
-    gse = genequery.run(species[s_to]['id'], offsets)
+    gse = genequery.run(offsets, index=species[s_to]['id'])
     gse.sort(key = lambda x: x[4])
     for item in gse:
         item[0] = species[s_to]['info']['gse'][item[0]]

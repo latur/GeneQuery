@@ -1,9 +1,6 @@
 import os, sys, json, math, glob
 import genequery
 
-import tracemalloc
-tracemalloc.start()
-
 if len(sys.argv) < 4:
     print("Usage:\n  python3 "+sys.argv[0]+" [species from] [species to] [genes list,..]")
     print("Example:\n  python3 "+sys.argv[0]+" mm mm 15368 93692 104263 99929 15417 16770 15275 12576 66681\n")
@@ -12,17 +9,20 @@ if len(sys.argv) < 4:
 with open('./data/xref.json', 'r') as e:
     xref = json.load(e)
 
+# --------------------------------------------------------------------------- #
 species = {}
 for bin in glob.glob('./data/*.bin'):
     code = os.path.basename(bin).replace('.bin', '')
-    species[code] = {'id': genequery.load(bin), 'info': {}}
+    species[code] = {'info': {}, 'name': bin}
     with open(bin.replace('.bin', '.m.json'), 'r') as e:
         species[code]['info'] = json.load(e)
 
-# --------------------------------------------------------------------------- #
-
 s_from, s_to = sys.argv[1:3]
 genes = sys.argv[3:]
+
+dbname = './data/' + s_to + '.bin'
+with open('./data/' + s_to + '.m.json', 'r') as e:
+    dbmeta = json.load(e)
 
 # All names -> entrez
 request = []
@@ -45,14 +45,11 @@ if s_from != s_to:
 # All entrz -> offsets
 offsets = []
 for id in request:
-    if id not in species[s_to]['info']['genes']: continue
-    offsets.append(species[s_to]['info']['genes'][id])
+    if id not in dbmeta['genes']: continue
+    offsets.append(dbmeta['genes'][id])
 
-gse = genequery.run(species[s_to]['id'], offsets)
+gse = genequery.run(offsets, dbname=dbname)
 gse.sort(key = lambda x: x[4])
 for item in gse:
-    item[0] = species[s_to]['info']['gse'][item[0]]
+    item[0] = dbmeta['gse'][item[0]]
     print(item)
-
-current, peak = tracemalloc.get_traced_memory()
-print(f"Current memory usage is {current / 10**6}MB; Peak was {peak / 10**6}MB")

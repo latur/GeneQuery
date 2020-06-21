@@ -7,7 +7,7 @@ typedef struct {
 } gmt;
 
 gmt * dbset[99];
-unsigned dbi = 0;
+int dbi = 0;
 
 unsigned block(FILE * db, unsigned length)
 {
@@ -59,7 +59,7 @@ gmt * reader(char * dbname)
 
 double * lf;
 
-void loadLogFactorials(char * filename, unsigned universe)
+void factorials(char * filename, unsigned universe)
 {
     FILE * fp;
     if ((fp = fopen(filename, "r")) == NULL) {
