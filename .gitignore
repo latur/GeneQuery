@@ -1,0 +1,6 @@
+app.*
+build/*
+dist/*
+genequery.egg*
+data/*.bin
+data/*.m.json
