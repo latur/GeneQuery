@@ -1,6 +1,3 @@
-import tracemalloc
-tracemalloc.start()
-
 import os, sys, json, glob
 import genequery
 from flask import Flask, jsonify, request
@@ -20,6 +17,7 @@ for bin in glob.glob('./data/*.bin'):
         species[code]['info'] = json.load(e)
 
 # --------------------------------------------------------------------------- #
+
 def query(s_from, s_to, genes):
     # All names -> entrez
     request = []
