@@ -4,7 +4,10 @@ genes = {}
 gseModules = {}
 maxModules = 1
 
-gmtH = open(sys.argv[1], 'r')
+gmt_file = sys.argv[1]
+export_name = sys.argv[2]
+
+gmtH = open(gmt_file, 'r')
 for row in gmtH.read().split('\n'):
     if row == '': continue
     obj = row.replace(',', '\t').replace('#', '\t').split('\t')
@@ -65,11 +68,18 @@ def bytes(num, size = 2):
     hexv = (size * 2 - len(hexv)) * '0' + hexv
     return [int(e, base=16) for e in chunks(hexv, 2)]
 
+# Sort GSE modules for better compression
+gseStrings = []
+for gse in gseModules:
+    chrs = [chr(255 if gse not in genes[gene] else int(genes[gene][gse])) for gene in genes]
+    gseStrings.append([''.join(chrs), gse])
+gseModulesList = [gse for s, gse in sorted(gseStrings, key=lambda x:x[0])]
+
 index = {}
 dbset = []
 for gene in genes:
     index[gene] = len(dbset)
-    vec = [(255 if gse not in genes[gene] else int(genes[gene][gse])) for gse in gseModules]
+    vec = [(255 if gse not in genes[gene] else int(genes[gene][gse])) for gse in gseModulesList]
     dbset.extend([i for i in flatten(compressed(vec))])
 
 # Header:  [modules offset]x4  [max modules]  [gse count]*4  [modules total]x4
@@ -77,13 +87,13 @@ header = []
 header.extend(bytes(len(dbset), 4))
 header.append(maxModules)
 header.extend(bytes(len(gseModules), 4))
-header.extend(bytes(sum([(len(gseModules[gse]) - 1) for gse in gseModules]), 4))
+header.extend(bytes(sum([(len(gseModules[gse]) - 1) for gse in gseModulesList]), 4))
 
 # --------------------------------------------------------------------------- #
 # GSE modules: Countrs matrix
 
 counters = []
-for gse in gseModules:
+for gse in gseModulesList:
     line = bytes(gseModules[gse][0], 3)
     for counter in gseModules[gse][1:]:
         line.extend(bytes(counter))
@@ -93,19 +103,10 @@ for gse in gseModules:
 header.extend(dbset)
 
 # ---------------------------------------------------------------------------- #
-prefix = sys.argv[2]
+H = open("./data/%s.gmt.bin" % (export_name, ), 'wb')
+H.write(bytearray(header))
+H.close()
 
-tcgmtH = open(prefix + '.bin', 'wb')
-tcgmtH.write(bytearray(header))
-tcgmtH.close()
-
-metaH = open(prefix + '.m.json', 'w')
-metaH.write(json.dumps({
-    'genes': index,
-    'gse': [gse for gse in gseModules]
-}))
-metaH.close()
-
-# python3 pack.gmt.py ../gqdb/hs.modules.gmt data/hs
-# python3 pack.gmt.py ../gqdb/mm.modules.gmt data/mm
-# python3 pack.gmt.py ../gqdb/rt.modules.gmt data/rt
+H = open("./data/%s.offsets.json" % (export_name, ), 'w')
+H.write(json.dumps({'genes': index, 'gse': [gse for gse in gseModulesList]}))
+H.close()

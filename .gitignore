@@ -1,7 +1,8 @@
 .idea
+.DS_Store
 app.*
 build/*
 dist/*
 genequery.egg*
 data/*.bin
-data/*.m.json
+data/*.json
