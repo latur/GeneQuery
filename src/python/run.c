@@ -41,8 +41,10 @@ static PyObject * run(PyObject *self, PyObject *args, PyObject *keywds)
                                      &offsets, &index, &dbname)) return NULL;
     /* --------------------------------------------------------------------- */
     gmt * db = NULL;
+    int temporary = 1;
     if (index >= 0 && index < dbi) {
         db = dbset[index];
+        temporary = 0;
     } else {
         db = reader(dbname);
         if (db == NULL) return NULL;
@@ -109,6 +111,12 @@ static PyObject * run(PyObject *self, PyObject *args, PyObject *keywds)
             PyObject * line = Py_BuildValue("[i,i,i,i,d,d]", gse, m, a, msize, log10(pval), log10(adj_pval));
             PyList_Append(result, line);
         }
+    }
+
+    if (temporary) {
+      free(db->genes);
+      free(db->counts);
+      free(db);
     }
 
     free(relation);

@@ -59,23 +59,9 @@ gmt * reader(char * dbname)
 
 double * lf;
 
-void factorials(char * filename, unsigned universe)
+void factorials(unsigned universe)
 {
-    FILE * fp;
-    if ((fp = fopen(filename, "r")) == NULL) {
-        printf("Unable to read Log[Factorial]'s file!\n\n");
-        exit(1);
-    }
-
     lf = (double *) malloc(sizeof(double) * universe);
-    char chunk[64];
-    char * end;
-
-    unsigned i = 0;
-    while (fgets(chunk, sizeof(chunk), fp) != NULL && i != universe) {
-        lf[i] = strtod (chunk, &end);
-        i += 1;
-    }
-
-    fclose(fp);
+    lf[0] = 0.0;
+    for (unsigned i = 1; i != universe; i++) lf[i] = lf[i - 1] + log(i);
 }
