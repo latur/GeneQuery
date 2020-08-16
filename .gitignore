@@ -4,5 +4,4 @@ app.*
 build/*
 dist/*
 genequery.egg*
-data/*.bin
-data/*.json
+*.gqdb
