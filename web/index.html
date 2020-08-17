@@ -30,7 +30,7 @@
                         <span>Mus Musculus</span>
                     </label>
                     <label>
-                        <input type="radio" name="query" value="rt" />
+                        <input type="radio" name="query" value="rn" />
                         <span>Rattus Norvegicus</span>
                     </label>
                 </div>
@@ -46,26 +46,27 @@
                         <span>Mus Musculus</span>
                     </label>
                     <label>
-                        <input type="radio" name="db" value="rt" />
+                        <input type="radio" name="db" value="rn" />
                         <span>Rattus Norvegicus</span>
                     </label>
                 </div>
             </div>
             <div class="col genes">
-                <textarea id="genes" rows="3" name="genes" class="form-control" placeholder="Genes, separated by comma, newline, whitespace or tab. Example: Bhlhe40, Hmox1, Grhpr, Hk1, Jmjd6, Ndst2"></textarea>
+                <textarea id="genes" rows="3" name="genes" class="form-control" placeholder="Genes, separated by comma, newline, whitespace or tab. Example: Bhlhe40, Hmox1, Grhpr, Hk1, Jmjd6, Ndst2">
+                  Col5a1,Tgm2,Gpc1,Phkg1,Efna1,Ampd3,Tktl1,Pnrc1,Plaur,Glrx,Maff,Serpine1,Cited2,Gapdh,Errfi1,Ets1,Aldoa,Tmem45a,Pdk1,Pgam2,Atf3,Aldoc,Gcnt2,Pgf,Gpc4,Nr3c1,Fbp1,Pgm1,Igfbp3,Tpd52,Ppfia4,Prkcdbp,Ldha,Rbpj,Pkp1,Plac8,Dcn,Igfbp1,Cdkn1c,Slc37a4,Ppargc1a,Ugp2,Csrp2,Bhlhe40,Hmox1,Grhpr,Hk1,Jmjd6,Ndst2,Dpysl4,Hs3st1,Slc2a5,Tiparp,Siah2,P4ha2,Ptrf,Adm,Hspa5,Pfkp,Pfkfb3,Hk2,Sdc3,Gpc3,Eno2,Ddit4,Mxi1,Gys1,Cav1,Srpx,Plin2,Gbe1,Ier3,Slc6a6,Ankzf1,Aldob,Has1,Kdelr3,Anxa2,Bcan,Brs3,Btg1,Irs2,Selenbp1,Cxcr4,Klhl24,Cdkn1a,Sap30,Vhl,Mif,Dtna,Lox,Lxn,Cdkn1b,Map3k1,Ero1l,Myh9,Pdk3,S100a4,Cp,Casp6,Il6,Tnfaip3,Vldlr,Pam,Nedd4l,Adora2b,Cyr61,Noct,Bnip3l,Tpi1,Scarb1,Nagk,Tpbg,Isg20,Hoxb9,Pfkl,Zfp36,Ids,Klf6,Wsb1,Xpnpep1,Bcl2,Ddit3,Ldhc,Pck1,Ndst1,Ppp1r15a,B3galt6,Pgm2,Vegfa,Sult2b1,Stc1,Kif5a,Pgk1,Sdc2,Slc25a1,Rragd,Jun,Fos,Tgfb3,Ilvbl,Ctgf,Gapdhs,Ccng2,Dusp1,Tpst2,Lalba,Ncan,Ndrg1,Inha,F3,Akap12,Tes,Galk1,Pdgfb,Slc2a3,Fosl2,Hexa,Sdc4,Fam162a,Wisp2,Ak4,Chst3,Egfr,Eno1,Rora,Ppp1r3c,Efna3,Car12,Gck,Large,Nfil3,Tgfbi,Kdm3a,Edn2,Bgn,Pygm,Foxo3,Pklr,P4ha1,Gaa,Stbd1,Prkca,Hdlbp,Eno3
+                </textarea>
             </div>
             <svg class="next" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#777" viewBox="0 0 24 24">
                 <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"></path>
             </svg>
             <div class="col">
-                <button class="primary button">Run</button>
+                <button data-query class="primary button">Run</button>
             </div>
         </div>
     </div>
 
-    <div class="results-box">
-
-    </div>
+    <div data-results class="results-box"></div>
+    <div data-modals></div>
 
     <div class="info-box">
         <h2 class="h2">About</h2>
@@ -120,6 +121,52 @@
         </p>
     </div>
 </div>
+
+<script type="text/template" id="table-row">
+  <tr>
+    <td>{:name}</td>
+    <td>
+      <div onclick="ShowHeatmap('{:db}/{:name}', {:module})" class="cell">{:module}</div>
+    </td>
+    <td>{:log10_apv}</td>
+    <td>
+      <div onclick="ShowOverlap('{:db}/{:name}/{:module}')" class="cell">{:genes}/{:total}</div>
+    </td>
+    <td><a target="_blank" rel="noopener" href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc={:GSE}">{:GSE}</a></td>
+    <td>+</td>
+  </tr>
+</script>
+
+<script type="text/template" id="table">
+  <table class="table">
+    <thead>
+      <tr>
+        <th width="90%">Experiment title</th>
+        <th>Module</th>
+        <th>Log<sub>10</sub>(adj.p<sub>value</sub>)</th>
+        <th>Overlap</th>
+        <th>NCBI</th>
+        <th>GMT</th>
+      </tr>
+    </thead>
+    <tbody>
+      {:data use table-row}
+    </tbody>
+  </table>
+</script>
+
+<script type="text/template" id="modal">
+  <div class="modal-wrapper">
+    <div data-modal-window class="modal-window">
+      <div onclick="ModalClose()" class="close">✕ Close [esc]</div>
+      {:content}
+    </div>
+    <div onclick="ModalClose()" class="modal-bg"></div>
+  </div>
+</script>
+
+
+<script type="text/javascript" src="template.js"></script>
 <script type="text/javascript" src="app.js"></script>
 </body>
 </html>
