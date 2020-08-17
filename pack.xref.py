@@ -1,6 +1,7 @@
 import sys, json, os
 
 supplement = sys.argv[1]
+samples = sys.argv[2:]
 
 def content(file):
     with open("%s/%s" % (supplement, file), 'r') as handle:
@@ -43,25 +44,23 @@ for sample in next(os.walk(supplement))[1]:
 
     xrefs[sample] = xref
 
-samples = ['hs','mm','rn']
-
 links = {}
 groups = []
 for values in content("orthologs.tsv"):
-    val = dict(zip(samples, [e.split(',') for e in values[0:3]]))
+    val = dict(zip(samples, [e.split(',') for e in values[0:len(samples)]]))
     group = len(groups)
     groups.append(val)
     for sample in val:
         if sample not in links: links[sample] = {}
         for ID in val[sample]:
-            if ID != 'NONE': links[sample][ID] = group
+            if ID != 'NONE':
+                links[sample][ID] = group
 
-H = open("./data/xref.json", 'w')
-H.write(json.dumps({'xrefs': xrefs, 'links': links, 'groups': groups}))
-H.close()
-
-print("Done")
-
-# python3 pack.xref.py ../supplement
+print(json.dumps({'xrefs': xrefs, 'links': links, 'groups': groups}))
+# print(json.dumps(links))
 # Usage:
+# python3 pack.xref.py [files dir] [species names] > [output file]
+# python3 pack.xref.py ../supplement hs mm rn > default.gqdb/xref.json
+
+# Call:
 # xref['groups'][ xref['links'][from_sample][entrz_ID] ] -> {'hh': ..., 'mm': ...}

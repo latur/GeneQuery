@@ -5,7 +5,7 @@ gseModules = {}
 maxModules = 1
 
 gmt_file = sys.argv[1]
-export_name = sys.argv[2]
+dst = sys.argv[2]
 
 gmtH = open(gmt_file, 'r')
 for row in gmtH.read().split('\n'):
@@ -82,12 +82,12 @@ for gene in genes:
     vec = [(255 if gse not in genes[gene] else int(genes[gene][gse])) for gse in gseModulesList]
     dbset.extend([i for i in flatten(compressed(vec))])
 
-# Header:  [modules offset]x4  [max modules]  [gse count]*4  [modules total]x4
-header = []
-header.extend(bytes(len(dbset), 4))
-header.append(maxModules)
-header.extend(bytes(len(gseModules), 4))
-header.extend(bytes(sum([(len(gseModules[gse]) - 1) for gse in gseModulesList]), 4))
+# gmtbin:  [modules offset]x4  [max modules]  [gse count]*4  [modules total]x4
+gmtbin = []
+gmtbin.extend(bytes(len(dbset), 4))
+gmtbin.append(maxModules)
+gmtbin.extend(bytes(len(gseModules), 4))
+gmtbin.extend(bytes(sum([(len(gseModules[gse]) - 1) for gse in gseModulesList]), 4))
 
 # --------------------------------------------------------------------------- #
 # GSE modules: Countrs matrix
@@ -100,13 +100,15 @@ for gse in gseModulesList:
     line.extend((maxModules * 2 + 1 - len(line)) * [0])
     dbset.extend(line)
 
-header.extend(dbset)
+gmtbin.extend(dbset)
 
 # ---------------------------------------------------------------------------- #
-H = open("./data/%s.gmt.bin" % (export_name, ), 'wb')
-H.write(bytearray(header))
+if not os.path.exists(dst): os.makedirs(dst)
+
+H = open(dst + 'gmt.bin', 'wb')
+H.write(bytearray(gmtbin))
 H.close()
 
-H = open("./data/%s.offsets.json" % (export_name, ), 'w')
+H = open(dst + 'offsets.json', 'w')
 H.write(json.dumps({'genes': index, 'gse': [gse for gse in gseModulesList]}))
 H.close()
