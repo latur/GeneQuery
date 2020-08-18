@@ -4,13 +4,19 @@
 
 > Requirements: python3, genequery
 
+```bash
+pip3 install --user git+https://github.com/latur/GeneQuery
+```
+
 ### Install:
 
 ```bash
-wget 'https://...'
-unzip default.gqdb
+# GeneQuery database:
+wget 'https://storage.googleapis.com/genequery/default.gqdb.zip'
+unzip default.gqdb.zip
 
-wget 'https://...'
+# GeneQuery CLI:
+wget 'https://raw.githubusercontent.com/latur/GeneQuery/master/gq.py'
 ```
 
 ### Usage:
@@ -35,14 +41,20 @@ Examples:
 
 > Requirements: python3, genequery, Flask
 
+```bash
+pip3 install --user git+https://github.com/latur/GeneQuery Flask
+```
+
 ### Install:
 
 ```bash
-wget 'https://...'
-unzip default.gqdb
+# GeneQuery database:
+wget 'https://storage.googleapis.com/genequery/default.gqdb.zip'
+unzip default.gqdb.zip
 
 git clone https://github.com/latur/GeneQuery
 cd GeneQuery
+python3 gqserver.py # Run web-server, default port 9225
 ```
 
 ### Run web-server:
