@@ -1,0 +1,115 @@
+.query-box {
+  padding: 18px;
+  background: #FFF;
+  box-shadow: 0 10px 30px #00000021;
+  border-radius: 5px;
+  margin-bottom: 30px;
+
+  .row {
+    display: flex;
+    align-items: center;
+
+    .next {
+      flex: 0 0 auto;
+      margin: 5px;
+    }
+
+    .col {
+      flex: 0 0 auto;
+
+      &.fix {
+        min-width: 150px;
+        margin-right: 16px;
+      }
+
+      &.genes {
+        flex: 1 1 100%;
+        position: relative;
+        height: 100px;
+
+        textarea {
+          z-index: 200;
+          position: absolute;
+          top: 0;
+        }
+      }
+    }
+  }
+
+  .radio-options {
+    position: relative;
+    z-index: 10;
+
+    label {
+      position: relative;
+      display: flex;
+      align-items: center;
+      border-radius: 3px;
+      margin: 0 0 8px 0;
+      cursor: pointer;
+      height: 28px;
+      padding: 5px 10px 5px 7px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      input {
+        margin-right: 4px;
+
+        &:after {
+          content: '';
+          position: absolute;
+          left: 0;
+          right: 0;
+          top: 0;
+          bottom: 0;
+          border: 1px solid #eee;
+          background: transparent;
+          border-radius: 4px;
+          z-index: -1;
+          transition: background 0.2s ease, border 0.2s ease;
+        }
+
+        &:checked {
+          &:after {
+            background: rgba(77, 144, 254, 0.2);
+            border-color: rgba(51, 0, 255, 0.37);
+          }
+        }
+      }
+
+      &:hover {
+        input:after {
+          border-color: rgba(51, 0, 255, 0.37);
+        }
+      }
+
+      span {
+        position: relative;
+        z-index: 10;
+        padding-top: 0.08em;
+        user-select: none;
+      }
+    }
+
+    label + input[type="radio"]:checked {
+      border-color: #000;
+    }
+  }
+
+}
+
+.info-box {
+  .h2 {
+    font-size: 22px;
+    font-weight: 300;
+    margin-bottom: 10px;
+  }
+
+  p {
+    font-size: 15px;
+    margin-bottom: 10px;
+    line-height: 1.65em;
+  }
+}
