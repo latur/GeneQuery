@@ -61,3 +61,35 @@
 body.modal {
   overflow: hidden;
 }
+
+.genes-lists {
+
+  h3 {
+    margin-bottom: 10px;
+  }
+
+  pre {
+    width: 540px;
+    text-align: left;
+
+    .full-list { display: none; }
+  }
+
+  .button {
+    display: inline-block;
+    margin: auto;
+    padding-left: 20px;
+    padding-right: 20px;
+
+    .o { display: none; }
+  }
+
+  &.show-all {
+    .common-genes { font-weight: bold; }
+    .full-list { display: initial; }
+    .button {
+      .o { display: initial; }
+      .f { display: none; }
+    }
+  }
+}

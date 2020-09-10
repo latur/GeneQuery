@@ -123,46 +123,62 @@
 </div>
 
 <script type="text/template" id="table-row">
-  <tr>
-    <td>{:name}</td>
-    <td>
-      <div onclick="ShowHeatmap('{:db}/{:name}', {:module})" class="cell">{:module}</div>
-    </td>
-    <td>{:log10_apv}</td>
-    <td>
-      <div onclick="ShowOverlap('{:db}/{:name}/{:module}')" class="cell">{:genes}/{:total}</div>
-    </td>
-    <td><a target="_blank" rel="noopener" href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc={:GSE}">{:GSE}</a></td>
-    <td>+</td>
-  </tr>
+    <tr>
+        <td>{:name}</td>
+        <td>
+            <div onclick="ShowHeatmap('{:db}/{:name}', {:module})" class="cell">{:module}</div>
+        </td>
+        <td>{:log10_apv}</td>
+        <td>
+            <div onclick="ShowOverlap('{:db}', '{:name}', '{:module}')" class="cell">{:genes}/{:total}</div>
+        </td>
+        <td>
+            <a target="_blank" rel="noopener" href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc={:GSE}">{:GSE}</a>
+        </td>
+        <td>
+            <div onclick="DownloadGMT('{:db}', '{:name}')" class="cell cell-center">
+                <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-cloud-arrow-down-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" d="M8 2a5.53 5.53 0 0 0-3.594 1.342c-.766.66-1.321 1.52-1.464 2.383C1.266 6.095 0 7.555 0 9.318 0 11.366 1.708 13 3.781 13h8.906C14.502 13 16 11.57 16 9.773c0-1.636-1.242-2.969-2.834-3.194C12.923 3.999 10.69 2 8 2zm2.354 6.854l-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 1 1 .708-.708L7.5 9.293V5.5a.5.5 0 0 1 1 0v3.793l1.146-1.147a.5.5 0 0 1 .708.708z"/>
+                </svg>
+            </div>
+        </td>
+    </tr>
 </script>
 
 <script type="text/template" id="table">
-  <table class="table">
-    <thead>
-      <tr>
-        <th width="90%">Experiment title</th>
-        <th>Module</th>
-        <th>Log<sub>10</sub>(adj.p<sub>value</sub>)</th>
-        <th>Overlap</th>
-        <th>NCBI</th>
-        <th>GMT</th>
-      </tr>
-    </thead>
-    <tbody>
-      {:data use table-row}
-    </tbody>
-  </table>
+    <table class="table">
+        <thead>
+        <tr>
+            <th width="90%">Experiment title</th>
+            <th>Module</th>
+            <th>Log<sub>10</sub>(adj.p<sub>value</sub>)</th>
+            <th>Overlap</th>
+            <th>NCBI</th>
+            <th>GMT</th>
+        </tr>
+        </thead>
+        <tbody>
+        {:data use table-row}
+        </tbody>
+    </table>
+</script>
+
+<script type="text/template" id="overlap">
+    <div data-genes-lists class="genes-lists">
+        <h3>Overlap of input genes with module {:module} of {:name}:</h3>
+        <pre><span class="common-genes">{:common}</span> <span class="full-list">{:full}</span></pre>
+        <a onclick="FullGenesList()" class="button button-small">Show <span class="f">full list of genes in module</span><span class="o">overlap only</span></a>
+    </div>
 </script>
 
 <script type="text/template" id="modal">
-  <div class="modal-wrapper">
-    <div data-modal-window class="modal-window">
-      <div onclick="ModalClose()" class="close">✕ Close [esc]</div>
-      {:content}
+    <div class="modal-wrapper">
+        <div data-modal-window class="modal-window">
+            <div onclick="ModalClose()" class="close">✕ Close [esc]</div>
+            {:content}
+        </div>
+        <div onclick="ModalClose()" class="modal-bg"></div>
     </div>
-    <div onclick="ModalClose()" class="modal-bg"></div>
-  </div>
 </script>
 
 

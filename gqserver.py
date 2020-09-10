@@ -36,8 +36,14 @@ for bin in glob.glob("%s/*/gmt.bin" % args['db']):
 xref = {}
 xfile = "%s/xref.json" % args['db']
 if os.path.isfile(xfile):
-    with open("%s/xref.json" % args['db'], 'r') as e:
+    with open(xfile, 'r') as e:
         xref = json.load(e)
+
+titles = {}
+tfile = "%s/titles.json" % args['db']
+if os.path.isfile(tfile):
+    with open(tfile, 'r') as e:
+        titles = json.load(e)
 
 def offsets(obj, db): # Entrez -> Offsets in .bin file
     data = {}
@@ -104,8 +110,8 @@ def heatmap(db, name):
         return jsonify([line.replace('\n', '').split('\t') for line in e])
 
 
-@app.route('/genes/<db>/<name>/<int:module>', methods=['POST'])
-def overlap(db, name, module):
+@app.route('/genes/<db>/<name>', methods=['POST'])
+def overlap(db, name):
     if db not in species:
         return jsonify({'Error': 'DB not found'})
 
@@ -116,9 +122,14 @@ def overlap(db, name, module):
     rev = {genes[k]:k for k in genes}
     all = [genes[k] for k in genes]
     gse = species[db]['meta']['gse'].index(name)
-    filtred = genequery.filter(all, loaded[db], gse=gse, module=module)
+    filtred = genequery.filter(all, loaded[db], gse=gse)
 
-    return jsonify([rev[o] for o in filtred])
+    modules = {}
+    for m, offset in filtred:
+        if m not in modules: modules[m] = []
+        modules[m].append(rev[offset])
+
+    return jsonify(modules)
 
 
 @app.route('/')
@@ -136,4 +147,4 @@ if __name__ == "__main__":
 
 
 # pip3 install flask
-# python3 gq-server.py
+# python3 gqserver.py
