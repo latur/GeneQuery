@@ -1,9 +1,13 @@
+.query-box-wrapper {
+  margin-bottom: 30px;
+}
+
 .query-box {
   padding: 18px;
   background: #FFF;
   box-shadow: 0 10px 30px #00000021;
   border-radius: 5px;
-  margin-bottom: 30px;
+  margin-bottom: 10px;
 
   .row {
     display: flex;
@@ -97,19 +101,23 @@
       border-color: #000;
     }
   }
-
 }
 
-.info-box {
-  .h2 {
-    font-size: 22px;
-    font-weight: 300;
-    margin-bottom: 10px;
-  }
+.examples {
+  text-align: right;
+  margin-right: -4px;
 
-  p {
-    font-size: 15px;
-    margin-bottom: 10px;
-    line-height: 1.65em;
+  a {
+    cursor: pointer;
+    margin: 0 4px;
+    border-bottom: 1px dashed #444;
   }
+}
+
+.empty-result {
+  padding: 20px 18px;
+  color: #721c24;
+  background-color: #f8d7da;
+  border-color: #f5c6cb;
+  border-radius: 6px;
 }

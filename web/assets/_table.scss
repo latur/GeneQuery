@@ -47,9 +47,11 @@ $border: #ccddff;
         bottom: 0;
         transition: box-shadow 0.25s ease;
         cursor: pointer;
+        display: flex;
+        align-items: center;
 
         &.cell-center {
-          text-align: center;
+          justify-content: center;
         }
 
         svg path {
@@ -85,7 +87,7 @@ $border: #ccddff;
       position: relative;
       z-index: 10;
       box-shadow: 0 0 0 4px rgba(0, 0, 0, 0);
-      transition: box-shadow 0.2s ease;
+      //transition: box-shadow 0.2s ease;
 
       &.current, &:hover {
         z-index: 20;
@@ -140,4 +142,8 @@ $border: #ccddff;
       }
     }
   }
+}
+
+.results-box {
+  margin-bottom: 50px;
 }

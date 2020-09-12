@@ -76,7 +76,7 @@ def convertor(names, query, db):
 
 
 # --------------------------------------------------------------------------- #
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 app = Flask(__name__, static_url_path='', static_folder='web')
 loaded = {}
 
@@ -95,6 +95,8 @@ def query(query, db):
 
     for item in gse:
         item[0] = species[db]['meta']['gse'][item[0]]
+        item.append(item[0] if item[0] not in titles else titles[item[0]])
+
     return jsonify({'gse': gse, 'genes': genes})
 
 
@@ -134,8 +136,11 @@ def overlap(db, name):
 
 @app.route('/')
 def root():
-    return app.send_static_file('index.html')
+    return render_template('index.html')
 
+@app.route('/about')
+def about():
+    return render_template('about.html')
 
 @app.route('/<path>/<any>')
 def all(path, any):

@@ -11,6 +11,22 @@ body {
   color: #222;
 }
 
+.link {
+  color: #111;
+  text-decoration: none;
+  transition: border 0.25s ease, color 0.25s ease;
+
+  &:hover {
+    color: #3300ff;
+    border-color: #3300ff;
+  }
+}
+
+.home {
+  color: #000;
+  text-decoration: none;
+}
+
 .content {
   max-width: 1040px;
   margin: auto;
@@ -21,10 +37,20 @@ body {
   padding: 14px 0;
   border-bottom: 1px solid #eee;
   margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 
   .h1 {
     font-size: 24px;
     font-weight: 300;
+  }
+
+  .links {
+    margin: 0 -8px;
+    a {
+      padding: 4px 8px;
+    }
   }
 }
 
@@ -57,6 +83,7 @@ body {
   &:hover {
     background: #5845ff;
     box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.2);
+    color: #FFF;
   }
 
   &.primary {
