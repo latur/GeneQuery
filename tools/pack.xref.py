@@ -1,3 +1,7 @@
+# Usage:
+# python3 pack.xref.py [files dir] [species names] > [output file]
+# python3 pack.xref.py ../supplement hs mm rn > default.gqdb/xref.json
+
 import sys, json, os
 
 supplement = sys.argv[1]
@@ -57,10 +61,6 @@ for values in content("orthologs.tsv"):
                 links[sample][ID] = group
 
 print(json.dumps({'xrefs': xrefs, 'links': links, 'groups': groups}))
-# print(json.dumps(links))
-# Usage:
-# python3 pack.xref.py [files dir] [species names] > [output file]
-# python3 pack.xref.py ../supplement hs mm rn > default.gqdb/xref.json
 
 # Call:
 # xref['groups'][ xref['links'][from_sample][entrz_ID] ] -> {'hh': ..., 'mm': ...}
