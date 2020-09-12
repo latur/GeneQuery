@@ -1,6 +1,5 @@
 .idea
 .DS_Store
-app.*
 build/*
 dist/*
 genequery.egg*
