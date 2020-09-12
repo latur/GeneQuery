@@ -48,13 +48,14 @@ pip3 install --user git+https://github.com/latur/GeneQuery Flask
 ### Install:
 
 ```bash
-# GeneQuery database:
+git clone https://github.com/latur/GeneQuery
+cd GeneQuery
+
+# Download GeneQuery database:
 wget 'https://storage.googleapis.com/genequery/default.gqdb.zip'
 unzip default.gqdb.zip
 
-git clone https://github.com/latur/GeneQuery
-cd GeneQuery
-python3 gqserver.py # Run web-server, default port 9225
+export FLASK_ENV=development && python3 gqserver.py # Run web-server on default port 9225
 ```
 
 ### Run web-server:
