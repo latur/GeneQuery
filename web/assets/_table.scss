@@ -93,11 +93,20 @@ $border: #ccddff;
         z-index: 20;
         box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.7);
       }
+
+      &:hover {
+        z-index: 30;
+
+        .value {
+          color: rgba(0,0,0,1);
+        }
+      }
     }
 
     &.c0 {
       flex: 0 0 102px;
       .name {
+        background: #FFF;
         justify-content: flex-start;
       }
     }
@@ -113,33 +122,8 @@ $border: #ccddff;
       background: #FFF;
       position: relative;
       font-size: 9px;
-
-      &:after {
-        display: block;
-        visibility: hidden;
-        position: absolute;
-        bottom: 0;
-        left: 20%;
-        opacity: 0;
-        content: attr(data-v); /* might also use attr(title) */
-        height: auto;
-        min-width: 100px;
-        padding: 5px 8px;
-        z-index: 999;
-        color: #fff;
-        text-decoration: none;
-        text-align: center;
-        background: rgba(0,0,0,0.85);
-        border-radius: 5px;
-      }
-
-      &.hover { // ??
-        &:after {
-          visibility: visible;
-          opacity: 1;
-          bottom: 20px;
-        }
-      }
+      color: rgba(0,0,0,0);
+      transition: color 0.25s ease;
     }
   }
 }
