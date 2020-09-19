@@ -4,3 +4,4 @@ build/*
 dist/*
 genequery.egg*
 *.gqdb
+*.gqdb.zip

@@ -2,7 +2,7 @@ from setuptools import setup, Extension
 
 setup(
     name = 'genequery',
-    version = '1.5.0',
+    version = '1.5.1',
     description = 'Expression-based phenotype searching engine',
     url = "https://github.com/latur/GeneQuery",
     author = 'Igor V.',

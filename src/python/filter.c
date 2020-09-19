@@ -22,7 +22,7 @@ static PyObject * filter(PyObject *self, PyObject *args, PyObject *keywds)
         num = PyList_GetItem(offsets, gene);
         long offset = PyLong_AsLong(num);
         addRelation(relation, db, offset, 0);
-        PyList_Append(result, Py_BuildValue("ii", relation[gse], offset));
+        if (relation[gse] < 253) PyList_Append(result, Py_BuildValue("ii", relation[gse], offset));
     }
 
     free(relation);
