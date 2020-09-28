@@ -104,10 +104,12 @@ $border: #ccddff;
     }
 
     &.c0 {
-      flex: 0 0 102px;
+      flex: 1 1 60px;
       .name {
         background: #FFF;
         justify-content: flex-start;
+        white-space: nowrap;
+        padding-right: 10px;
       }
     }
 

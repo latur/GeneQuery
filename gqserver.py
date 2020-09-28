@@ -10,6 +10,13 @@ for k, v in enumerate(sys.argv):
     if v[0] == '-' and v[1:] in args:
         args[v[1:]] = sys.argv[k+1] if (k+1) in sys.argv else ""
 
+def js(name):
+    f = "%s/%s.json" % (args['db'], name)
+    if os.path.isfile(f):
+        with open(f, 'r') as e:
+            return json.load(e)
+    return {}
+
 # --------------------------------------------------------------------------- #
 if args['h'] != False:
     log('Usage:', '37;1')
@@ -33,17 +40,10 @@ for bin in glob.glob("%s/*/gmt.bin" % args['db']):
         for hm in glob.glob("%s/*/eigens/*.tsv" % args['db']):
             species[spc]['heatmap'][os.path.basename(hm).split('.')[0]] = hm
 
-xref = {}
-xfile = "%s/xref.json" % args['db']
-if os.path.isfile(xfile):
-    with open(xfile, 'r') as e:
-        xref = json.load(e)
+xref = js('xref')
+gse_names = js('gse_names')
+gsm_names = js('gsm_names')
 
-titles = {}
-tfile = "%s/titles.json" % args['db']
-if os.path.isfile(tfile):
-    with open(tfile, 'r') as e:
-        titles = json.load(e)
 
 def offsets(obj, db): # Entrez -> Offsets in .bin file
     data = {}
@@ -54,6 +54,7 @@ def offsets(obj, db): # Entrez -> Offsets in .bin file
     return data
 
 def convertor(names, query, db):
+    names = [name if name[0:3] != 'ENS' else name.split('.')[0] for name in names]
     entrez = {name: [name] for name in names}
 
     if 'xrefs' in xref:
@@ -95,7 +96,7 @@ def query(query, db):
 
     for item in gse:
         item[0] = species[db]['meta']['gse'][item[0]]
-        item.append(item[0] if item[0] not in titles else titles[item[0]])
+        item.append(item[0] if item[0] not in gse_names else gse_names[item[0]])
 
     return jsonify({'gse': gse, 'genes': genes})
 
@@ -109,7 +110,9 @@ def heatmap(db, name):
         return jsonify({'Error': 'Heatmap not found'})
 
     with open(species[db]['heatmap'][name], 'r') as e:
-        return jsonify([line.replace('\n', '').split('\t') for line in e])
+        matrix = [line.replace('\n', '').split('\t') for line in e]
+        matrix[0][1:] = [id if id not in gsm_names else gsm_names[id] for id in matrix[0][1:]]
+        return jsonify(matrix)
 
 
 @app.route('/genes/<db>/<name>', methods=['POST'])

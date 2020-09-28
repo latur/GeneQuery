@@ -75,7 +75,7 @@ function ModalClose() {
 function ShowHeatmap(url, m) {
   Request('/heatmap/' + url, {}, function(res){
     Modal(Heatmap(res, m));
-    qs('[data-modal-window]').style.width = res.length * 22 + 80 + 40 + 'px';
+    qs('[data-modal-window]').style.width = res.length * 22 + qs('.name.row').offsetWidth + 20 + 'px';
   });
 }
 

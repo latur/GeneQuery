@@ -24,6 +24,7 @@ for sample in next(os.walk(supplement))[1]:
 
     for ensg, name, entrez in reader(sample, 'fix_gene3'):
         if entrez == 'NONE': continue
+        ensg = ensg.split('.')[0]
         if ensg not in xref: xref[ensg] = {}
         xref[ensg][entrez] = 1
         if name not in xref: xref[name] = {}

@@ -24,4 +24,5 @@ function Run(n) {
     item.checked = item.value === examples[n].db;
   });
   document.querySelector('#genes').value = examples[n].genes;
+  qs('[data-query]').dispatchEvent(new Event('click'));
 }
